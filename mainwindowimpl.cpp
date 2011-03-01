@@ -1,23 +1,35 @@
 #include <QtGui>
 #include "mainwindowimpl.h"
+#include "chatwindowimpl.h"
+
 //
 MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f) 
 	: QMainWindow(parent, f)
 {
 	setupUi(this);
-	refresh_label();
-	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Silviu",listWidget));
-	pathName = QApplication::applicationDirPath();
+	init();
+
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
-	avatar->setStyleSheet("background-image: url(/home/luther/pidgi/ui/bb8.jpg)");
-	avatar->setGeometry(QRect(6,0,30,30));
+	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));
+}
 
+void MainWindowImpl::init()
+{
+	refresh_label();
+	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Silviu",listWidget));
 }
 
 void MainWindowImpl::about()
 {
-	
+	QMessageBox::about(this, tr("About"), tr("Credits: <p> Silviu Grijincu </p>"));
+}
+
+void MainWindowImpl::open_chat_window(QListWidgetItem* item)
+{
+	ChatWindowImpl* chat = new ChatWindowImpl();
+	chat->change_title(item->text());
+	chat->show();
 }
 
 QString MainWindowImpl::get_buddy_name()
@@ -38,7 +50,8 @@ void MainWindowImpl::refresh_label()
 void MainWindowImpl::add_buddy_hard()
 {
 	QString name = get_buddy_name();
-	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),name,listWidget));
+	if (name != NULL)
+		add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),name,listWidget));
 	
 }
 
