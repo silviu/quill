@@ -10,17 +10,21 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	pathName = QApplication::applicationDirPath();
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
+	avatar->setStyleSheet("background-image: url(/home/luther/pidgi/ui/bb8.jpg)");
+	avatar->setGeometry(QRect(6,0,30,30));
+
 }
 
 void MainWindowImpl::about()
 {
-	QFileDialog dialog(this);
-	dialog.setFileMode(QFileDialog::ExistingFiles);
-	dialog.setViewMode(QFileDialog::Detail);
-	dialog.setDirectory(pathName);
-	QStringList fileNames;
-	QString type;
-	dialog.exec();
+	
+}
+
+QString MainWindowImpl::get_buddy_name()
+{
+	QString str;
+	QString answer = QInputDialog::getText(0, "Add new buddy", str);
+	return answer;
 }
 
 void MainWindowImpl::refresh_label()
@@ -33,7 +37,8 @@ void MainWindowImpl::refresh_label()
 
 void MainWindowImpl::add_buddy_hard()
 {
-	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Lucian",listWidget));
+	QString name = get_buddy_name();
+	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),name,listWidget));
 	
 }
 

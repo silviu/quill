@@ -14,6 +14,7 @@ private slots:
 	void add_buddy(QListWidgetItem* iTem1);
 	void add_buddy_hard();
 	void refresh_label();
+	QString get_buddy_name();
 private:
 		QString pathName;
 		QString extractFilePath(QString fn);
