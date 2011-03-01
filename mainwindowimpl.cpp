@@ -5,27 +5,42 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	: QMainWindow(parent, f)
 {
 	setupUi(this);
+	refresh_label();
+	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Silviu",listWidget));
 	pathName = QApplication::applicationDirPath();
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-	connect(actionAdd, SIGNAL(triggered()), this, SLOT(add_buddy()));
-
+	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
 }
 
 void MainWindowImpl::about()
 {
-	QFileDialog dialog(this);																	// create a file dialog for selecting the files we want to work on
-	dialog.setFileMode(QFileDialog::ExistingFiles);						// make sure we only display files
-	dialog.setViewMode(QFileDialog::Detail);									// get a detailed view of the files
-	dialog.setDirectory(pathName);														// set the current path to the last used path
-	QStringList fileNames;																		// This holds the list of files that the user selects
-	QString type;																							// This holds the command line switch for either access or modified time
+	QFileDialog dialog(this);
+	dialog.setFileMode(QFileDialog::ExistingFiles);
+	dialog.setViewMode(QFileDialog::Detail);
+	dialog.setDirectory(pathName);
+	QStringList fileNames;
+	QString type;
 	dialog.exec();
 }
 
-void MainWindowImpl::add_buddy()
+void MainWindowImpl::refresh_label()
 {
-	QString new_buddy = "Lucian";
-	listWidget->addItem(new_buddy);
+	int user_count = listWidget->count();
+	QString str_num = QString::number(user_count);
+	QString string = str_num + " users online.";
+	label->setText(string);
+}
+
+void MainWindowImpl::add_buddy_hard()
+{
+	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Lucian",listWidget));
+	
+}
+
+void MainWindowImpl::add_buddy(QListWidgetItem* iTem1)
+{
+	listWidget->addItem(iTem1);
+	refresh_label();
 }
 
 // Extract a file path from a full path/filename
