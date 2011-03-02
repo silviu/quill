@@ -1,5 +1,9 @@
 #include <QtGui>
 #include "chatwindowimpl.h"
+#include "client.h"
+#include <pthread.h>
+#include "common.h"
+
 
 ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent, f)
 {
@@ -31,4 +35,11 @@ void ChatWindowImpl::add_text_to_browser()
 		text += "\n";
 	}
 	textEdit->clear();
+	
+	struct argu_struct args;
+	args.arg1 = "luther";
+	args.arg2 = message.toLatin1().data();
+	pthread_t tid;
+	pthread_create(&tid, NULL, &send_message, (void*) &args);
+
 }

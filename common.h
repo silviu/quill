@@ -6,6 +6,18 @@
 
 using namespace std;
 
+struct arg_struct {
+	string arg1;
+	string arg2;
+	string arg3;
+	string arg4;
+};
+
+struct argu_struct {
+	char* arg1;
+	char* arg2;
+};
+
 extern const char* prompt_line;
 
 void prompt();

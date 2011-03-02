@@ -3,11 +3,9 @@
 #include "chatwindowimpl.h"
 #include "client.h"
 #include <pthread.h>
+#include "common.h"
 
 
-
-
-//
 MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f) 
 	: QMainWindow(parent, f)
 {
@@ -21,13 +19,16 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 
 void MainWindowImpl::init()
 {
-	void* args;
+	struct arg_struct args;
+	args.arg1 = strdup("luther");
+	args.arg2 = strdup("127.0.0.1");
+	args.arg3 = strdup("1234");
+	args.arg4 = strdup("/download");
 	pthread_t tid;
-	pthread_create(&tid, NULL, make_connection, args);
+	pthread_create(&tid, NULL, &make_connection, (void*) &args);
 	
 	refresh_label();
 	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Silviu",listWidget));
-
 }
 
 void MainWindowImpl::about()

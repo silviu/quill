@@ -423,6 +423,22 @@ int print_file (string username, string filename, string download_path)
 	return 0;
 }
 
+void send_message(void* args) 
+{
+	struct argu_struct *argu = (struct argu_struct *)args;
+	
+	string message ="\01";
+	message.append(argu->arg2);
+	message.append("\01\01");
+
+	user_info* user = new user_info();
+	user = get_info_for_user("silviu");
+	int rc = send_msg_or_file(*user, "luther", message, PROTO_START_MSG);
+		if (rc == -1) {
+			perros("send_msg() in run_command_from_user()");
+			return;
+		}
+}
 
 /** Runs commands from the client user */
 int run_command_from_user(int fd, string client_name, string download_path)
@@ -545,7 +561,8 @@ int bind_to_random_port(string &host, string & port)
 
 void make_connection(void* args)
 {
-	args = (char**)args;
+	struct arg_struct *argu = (struct arg_struct *)args;
+
 	cout << "AAAAAAAAAAAAAAAAA" << endl;
 	/*
 	if (argc < 4) {
@@ -566,15 +583,15 @@ void make_connection(void* args)
 		return;
 	}
 
-    char* name = strdup("luther");//argv[1];
-	char* server_host = strdup("127.0.0.1");//argv[2];
-	char* server_port = strdup("1234");//argv[3];
-	char* client_download = strdup("/downloads");//argv[4];
+    string name = argu->arg1;
+	string server_host = argu->arg2;
+	string server_port = argu->arg3;
+	string client_download = argu->arg4;
 	
     string client_name = string(name);
 	string download = string(client_download);
 	/* Connect to the server. Get the dile descriptor. */
-	int cfd = connect_to(server_host, server_port);
+	int cfd = connect_to(server_host.c_str(), server_port.c_str());
     
 	string to_send;
 	to_send.append(name); to_send.append(" ");
