@@ -1,23 +1,33 @@
 #include <QtGui>
 #include "mainwindowimpl.h"
 #include "chatwindowimpl.h"
+#include "client.h"
+#include <pthread.h>
+
+
+
 
 //
 MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f) 
 	: QMainWindow(parent, f)
 {
 	setupUi(this);
-	init();
+ 	init();
 
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
-	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));
+	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));	
 }
 
 void MainWindowImpl::init()
 {
+	void* args;
+	pthread_t tid;
+	pthread_create(&tid, NULL, make_connection, args);
+	
 	refresh_label();
 	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Silviu",listWidget));
+
 }
 
 void MainWindowImpl::about()

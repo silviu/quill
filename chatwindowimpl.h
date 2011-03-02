@@ -8,10 +8,12 @@ class ChatWindowImpl : public QWidget, public Ui::ChatWindow
 {
 Q_OBJECT
 public:
-	ChatWindowImpl( QWidget * parent = 0, Qt::WFlags f = 0 );
+	ChatWindowImpl( QWidget * parent = 0, Qt::WFlags f = 0);
 	void change_title(QString user_name);
-private slots:
-
+	QString text;
+	QString get_time();
 	
+private slots:
+	void add_text_to_browser();
 };
 #endif
