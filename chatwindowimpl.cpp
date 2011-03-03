@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include "common.h"
 
+string mesaj;
 
 ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent, f)
 {
@@ -28,18 +29,19 @@ QString ChatWindowImpl::get_time()
 void ChatWindowImpl::add_text_to_browser()
 {
 	QString message = textEdit->toPlainText();
+	mesaj = message.toStdString();
+	
 	if (message != "") {
 		text += "me(" + get_time() + "): " + message;
 		textShow->setFontWeight(200);
 		textShow->setText(text);
 		text += "\n";
+		
+		struct argu_struct args;
+		args.arg1 = "luther";
+		args.arg2 =  message.toStdString();
+		pthread_t tid;
+		pthread_create(&tid, NULL, &send_message_gui, (void*) &args);
 	}
 	textEdit->clear();
-	
-	struct argu_struct args;
-	args.arg1 = "luther";
-	args.arg2 =  message.toLatin1().data();
-	pthread_t tid;
-	pthread_create(&tid, NULL, &send_message_gui, (void*) &args);
-
 }

@@ -19,8 +19,8 @@ struct arg_struct {
 };
 
 struct argu_struct {
-	char* arg1;
-	char* arg2;
+	string arg1;
+	string arg2;
 };
 
 extern const char* prompt_line;

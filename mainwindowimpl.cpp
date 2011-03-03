@@ -48,7 +48,7 @@ void MainWindowImpl::sign_in()
 	pthread_t tid;
 	pthread_create(&tid, NULL, &make_connection, (void*) &args);
 	pthread_detach(tid);
-	
+	signinButton->setFlat(true);
 	
 	extern int connection_state;
 	while(connection_state != CONNECTED && connection_state != USER_EXISTS){
@@ -62,9 +62,22 @@ void MainWindowImpl::sign_in()
 			pthread_cancel(tid);
 			connection_state = NO_STATE;
 			errorLabel->setText("Username already online.");
+			signinButton->setFlat(false);
+
 			return;
 	}
 	
+	if (connection_state == CONNECTION_PROBLEM) {
+		pthread_cancel(tid);
+		connection_state = NO_STATE;
+		errorLabel->setText("Connection problem.");
+		signinButton->setFlat(false);
+
+		return;
+		
+	}
+	
+	signinButton->setFlat(false);
 	loginWidget->setVisible(false);
 	chatWidget->setVisible(true);
 	
@@ -103,7 +116,7 @@ void MainWindowImpl::add_buddy_hard()
 {
 	QString name = get_buddy_name();
 	if (name != NULL)
-		add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),name,listWidget));
+		add_buddy(new QListWidgetItem(QIcon(":/ui/bb8.jpg"),name,listWidget));
 	
 }
 

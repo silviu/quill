@@ -427,15 +427,16 @@ int print_file (string username, string filename, string download_path)
 
 void send_message_gui(void* args) 
 {
+	extern string mesaj;
 	struct argu_struct *argu = (struct argu_struct *)args;
-	
-	string message ="\01";
-	message.append(argu->arg2);
+	string message = "\01";
+	message.append(mesaj);
 	message.append("\01\01");
-
+	
 	user_info* user = new user_info();
-	user = get_info_for_user("silviu");
-	int rc = send_msg_or_file(*user, "luther", message, PROTO_START_MSG);
+	user = get_info_for_user(strdup("silviu"));
+	string from = "luther";
+	int rc = send_msg_or_file(*user, from, message, PROTO_START_MSG);
 		if (rc == -1) {
 			perros("send_msg() in run_command_from_user()");
 			return;
