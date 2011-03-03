@@ -4,6 +4,11 @@
 #include <string>
 #include <string.h>
 
+#define CONNECTED 1
+#define NO_STATE 0
+#define USER_EXISTS 2
+#define CONNECTION_PROBLEM 3
+
 using namespace std;
 
 struct arg_struct {

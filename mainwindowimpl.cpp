@@ -1,4 +1,6 @@
 #include <QtGui>
+#include <QImage>
+
 #include "mainwindowimpl.h"
 #include "chatwindowimpl.h"
 #include "client.h"
@@ -10,7 +12,13 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	: QMainWindow(parent, f)
 {
 	setupUi(this);
- 	init();
+	init();
+	
+	connect(signinButton, SIGNAL(clicked()), this, SLOT(sign_in()));
+	connect(usernameEdit, SIGNAL(selectionChanged()), this, SLOT(username_clear()));
+	connect(passwordEdit, SIGNAL(selectionChanged()), this, SLOT(password_clear()));
+
+
 
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
@@ -19,16 +27,49 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 
 void MainWindowImpl::init()
 {
+	chatWidget->setVisible(false);
+	loginWidget->setVisible(true);
+}
+
+void MainWindowImpl::sign_in()
+{
+	username = usernameEdit->text();
+	
+	if (username == "Username..." || "" == username) {
+		errorLabel->setText("Please add your username.");
+		return;
+	}
+	
 	struct arg_struct args;
-	args.arg1 = strdup("luther");
+	args.arg1 = username.toStdString();
 	args.arg2 = strdup("127.0.0.1");
 	args.arg3 = strdup("1234");
 	args.arg4 = strdup("/download");
 	pthread_t tid;
 	pthread_create(&tid, NULL, &make_connection, (void*) &args);
+	pthread_detach(tid);
+	
+	
+	extern int connection_state;
+	while(connection_state != CONNECTED && connection_state != USER_EXISTS){
+		printf("CONNECTION_STATE=[%d]\n", connection_state);
+		QTime dieTime = QTime::currentTime().addSecs(2);
+		while( QTime::currentTime() < dieTime )
+			QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+	}
+	
+	if (connection_state == USER_EXISTS) {
+			pthread_cancel(tid);
+			connection_state = NO_STATE;
+			errorLabel->setText("Username already online.");
+			return;
+	}
+	
+	loginWidget->setVisible(false);
+	chatWidget->setVisible(true);
 	
 	refresh_label();
-	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),"Silviu",listWidget));
+	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),username, listWidget));
 }
 
 void MainWindowImpl::about()
@@ -72,14 +113,12 @@ void MainWindowImpl::add_buddy(QListWidgetItem* iTem1)
 	refresh_label();
 }
 
-// Extract a file path from a full path/filename
-QString MainWindowImpl::extractFilePath(QString fn)
+void MainWindowImpl::username_clear()
 {
-	if(fn == "")																																	// If we are sent an empty string......
-		return("");																																	// ...then return and empty string
-	while(fn.right(1) != "/")																											// Find the last path seperator
-	{
-		fn = fn.left(fn.size() - 1);
-	}
-	return(fn);																																		// Send back the path
+	usernameEdit->setText("");
+}
+
+void MainWindowImpl::password_clear()
+{
+	passwordEdit->setText("");
 }

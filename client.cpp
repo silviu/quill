@@ -29,6 +29,8 @@
 
 using namespace std;
 
+int connection_state;
+
 const char* prompt_line = "client> ";
 
 fd_set client_fds;
@@ -423,7 +425,7 @@ int print_file (string username, string filename, string download_path)
 	return 0;
 }
 
-void send_message(void* args) 
+void send_message_gui(void* args) 
 {
 	struct argu_struct *argu = (struct argu_struct *)args;
 	
@@ -559,7 +561,7 @@ int bind_to_random_port(string &host, string & port)
 }
  
 
-void make_connection(void* args)
+int make_connection(void* args)
 {
 	struct arg_struct *argu = (struct arg_struct *)args;
 
@@ -574,13 +576,15 @@ void make_connection(void* args)
 	int bfd = bind_to_random_port(host, port);
 	if (bfd == -1) {
 		perros("bind_to_random_port returned -1 in main");
-		return;
+		return -1;
+		connection_state = CONNECTION_PROBLEM;
 	}
 
 	int rc = listen(bfd, MAX_BACKLOG);
 	if ( rc == -1) {
 		perros("listen in main");
-		return;
+		return -1;
+		connection_state = CONNECTION_PROBLEM;
 	}
 
     string name = argu->arg1;
@@ -603,6 +607,7 @@ void make_connection(void* args)
 	if (rc == -1) {
 		perros("writeln in main");
 		close(cfd);
+		connection_state = CONNECTION_PROBLEM;
 	}
 
 	/* Wait for the response ACK/NACK */
@@ -612,16 +617,22 @@ void make_connection(void* args)
 	if (rc == -1) {
 		perror("recv: in readln while waiting for ACK/NACK\n");
 		close(cfd);
-		return;
+		connection_state = CONNECTION_PROBLEM;
+
+		return -1;
 	}
 
 	if (response == "NACK\n") {
 		cout << "Autentificare nu a reusit... exista deja client cu numele \"" 
 			 << name << "\"" <<endl << flush;
+		connection_state = USER_EXISTS;
 		close(cfd);
-		return;
+		return -2;
 	}
-	cout << "Autentificarea a reusit" << endl << flush;	
+	cout << "Autentificarea a reusit" << endl << flush;
+	connection_state = CONNECTED;
+	
+	
 
 	FD_ZERO(&client_fds);
     /* stdin is selectable */
@@ -673,5 +684,5 @@ void make_connection(void* args)
 			}
 		}
 	}
-	return;
+	return 0;
 }
