@@ -220,18 +220,20 @@ int print_msg_nr()
  
 void update_user_time()
 {
+	vector<string> to_erase;
 	map<string, user_info>::iterator it;
 	for (it = user_list.begin(); it != user_list.end(); ++it) {
 		if (it->second.time <= 0) {
 			printf("ZEROOOOO++++++++++++++\n");
-			user_list.erase(it);
-			it++;
+			to_erase.push_back(it->first);
 		}
 		else {
 			printf("++++++++++++++TIME=[%d]", it->second.time);
 			it->second.time--;
 		}
 	}
+	for (unsigned int i = 0; i < to_erase.size(); i++)
+		user_list.erase(to_erase[i]);
 }
 int update_user_list(string user_bulk)
 {

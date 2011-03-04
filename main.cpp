@@ -14,7 +14,7 @@ void add_buddy(QString username, QListWidget* listWidget)
 	listWidget->addItem(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"), username, listWidget));
 }
 
-void rem_buddy(QListWidgetItem* item, QListWidget* listWidget)
+void rem_buddy(QListWidgetItem* item)
 {
 	printf("SCOT DIN LISTA:[%s]\n", item->text().toStdString().c_str());
 	delete(item);
@@ -30,7 +30,7 @@ bool is_in_list(QString user, QListWidget* listWidget)
 	return false;
 }
 
-bool is_in_map(QString user, QListWidget* listWidget)
+bool is_in_map(QString user)
 {
 	extern map<string, user_info> user_list;
 	map<string, user_info>::iterator it;
@@ -58,17 +58,18 @@ void* populate_list(void* listWidget)
 		
 		for(int row = 0; row < ((QListWidget*)listWidget)->count(); row++) {
 			QListWidgetItem *item = ((QListWidget*)listWidget)->item(row);
-			if (!is_in_map(item->text(), (QListWidget*)listWidget))
-				rem_buddy(item, (QListWidget*)listWidget);
+			if (!is_in_map(item->text())) {
+				rem_buddy(item);
+				break;
+			}
 		}
 	sleep(5);
 	}
 	return NULL;
 }
 
-void* check_for_messages(void* win)
+void* check_for_messages(void*)
 {
-	MainWindowImpl* winn = (MainWindowImpl*)win;
 	while(1){
 		extern map<string, user_info> user_list;
 		map<string, user_info>::iterator it;
@@ -100,6 +101,6 @@ int main(int argc, char ** argv)
 	return app.exec();
 	
 	pthread_t tidi;
-	pthread_create(&tidi, NULL, &check_for_messages, win);
+	pthread_create(&tidi, NULL, &check_for_messages, NULL);
 	win->open_extern_chat("SSS");
 }
