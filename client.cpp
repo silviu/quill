@@ -15,7 +15,8 @@
 #include <vector>
 #include "common.h"
 #include "base64.h"
-
+#include <vector>
+#include "mainwindowimpl.h"
 
 #define MAX_BACKLOG 10
 #define PROTO_START_MSG "msg from "
@@ -36,26 +37,19 @@ const char* prompt_line = "client> ";
 fd_set client_fds;
 int fdmax = 0;
 
-struct user_info {
-	user_info(const string &h, const string &p, int &f) : host(h), port(p), fd(f) {}
-	user_info() : host("<none>"), port("-1"), fd(-1) {}
-	string host;
-	string port;
-	int fd;
-	vector<string> msg;
-	vector<string> files;
-	vector<string> flname;
-};
-
 map<string, user_info> user_list;
 
 /** List all the users */
-void list_users()
+void list_users(void*)
 {
+	extern vector<string> users;
+
 	int i;
 	map<string, user_info>::iterator it;
-	for(it = user_list.begin(), i = 0; it != user_list.end(); ++it, i++)
+	for(it = user_list.begin(), i = 0; it != user_list.end(); ++it, i++) {
 		cout << it->first << endl << flush;
+		users.push_back(it->first);
+	}
 }
 
 /** Respond to the server ping */
@@ -153,7 +147,7 @@ int add_file_name(string user, string filename)
 
 /** Reads a message from it's peer */
 int read_msg(int fd)
-{
+{	
 	string line, what, from, who, msg;
 	int rc = readln(fd, line);
 	if (rc == -1) {
@@ -179,6 +173,7 @@ int read_msg(int fd)
 		add_msg(who, msg);
 		cout << "\nA fost primit mesaj din partea utilizatorului " 
 			 << who << "...." << endl << flush;
+			 
 		prompt();
 		update_user_fd(who, fd);
 	}
@@ -222,8 +217,25 @@ int print_msg_nr()
 /** Reads the user_list sent by the server and updates
  * its local copy
  */
+ 
+void update_user_time()
+{
+	map<string, user_info>::iterator it;
+	for (it = user_list.begin(); it != user_list.end(); ++it) {
+		if (it->second.time <= 0) {
+			printf("ZEROOOOO++++++++++++++\n");
+			user_list.erase(it);
+			it++;
+		}
+		else {
+			printf("++++++++++++++TIME=[%d]", it->second.time);
+			it->second.time--;
+		}
+	}
+}
 int update_user_list(string user_bulk)
 {
+	printf("\n\nUPDATE_USER_LIST((((((((((((((((((())))))))))))))))))))\n");
 	string h, p, name;
 	map<string, user_info>::iterator it;
 	stringstream ss(stringstream::in|stringstream::out);
@@ -234,16 +246,23 @@ int update_user_list(string user_bulk)
 
 	user_info* user = new user_info(h, p, f);
 	it = user_list.find(name);
+	
+	if (it != user_list.end())
+		it->second.time = 10;
 
-	if (it == user_list.end())
+	if (it == user_list.end()) {
 		/* if the username is not in the map add it to the user_list */
 		user_list.insert(pair<string, user_info>(name, *user));
+		it = user_list.find(name);
+		it->second.time = 10;
+	}
 	else if (( it->second.host != user->host ) || (it->second.port != user->port)) {
 		/* if the username already was in the list, but the host/port changed */
 		it->second.host = user->host;
 		it->second.port = user->port;
 		it->second.fd = -1;
 	}
+	update_user_time();
 	return 0;
 }
 
@@ -425,18 +444,19 @@ int print_file (string username, string filename, string download_path)
 	return 0;
 }
 
-void send_message_gui(void* args) 
+void send_message_gui(void*) 
 {
+	extern string from_who;
+	extern string to_who;
 	extern string mesaj;
-	struct argu_struct *argu = (struct argu_struct *)args;
+	//struct argu_struct *argu = (struct argu_struct *)args;
 	string message = "\01";
 	message.append(mesaj);
 	message.append("\01\01");
 	
 	user_info* user = new user_info();
-	user = get_info_for_user(strdup("silviu"));
-	string from = "luther";
-	int rc = send_msg_or_file(*user, from, message, PROTO_START_MSG);
+	user = get_info_for_user(to_who);
+	int rc = send_msg_or_file(*user, from_who, message, PROTO_START_MSG);
 		if (rc == -1) {
 			perros("send_msg() in run_command_from_user()");
 			return;
@@ -451,7 +471,7 @@ int run_command_from_user(int fd, string client_name, string download_path)
 	if (command == "")
 		prompt();
 	else if (command == "list") {
-		list_users();
+		list_users(NULL);
 		prompt();
 	}
 	else if (command == "flist") {

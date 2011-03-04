@@ -3,6 +3,7 @@
 //
 #include <QMainWindow>
 #include "ui_mainwindow.h"
+#include "common.h"
 
 //
 class MainWindowImpl : public QMainWindow, public Ui::MainWindow
@@ -11,22 +12,27 @@ Q_OBJECT
 public:
 	MainWindowImpl( QWidget * parent = 0, Qt::WFlags f = 0 );
 	QString username;
+	void sleep(int time);
+	void populate_list();
+	QListWidget* get_listWidget();
+	void open_extern_chat(QString title);
+
+
 friend class ChatWindowImpl;
 private slots:
 	void about();
 	void sign_in();
 	void init();
-	void add_buddy(QListWidgetItem* iTem1);
+	void add_buddy(QString user_name);
 	void add_buddy_hard();
 	void refresh_label();
 	QString get_buddy_name();
 	void open_chat_window(QListWidgetItem*);
 	void username_clear();
 	void password_clear();
+
 private:
-		QString pathName;
-		QString extractFilePath(QString fn);
-		
+	bool is_in_list(QString user);
 };
 #endif
 

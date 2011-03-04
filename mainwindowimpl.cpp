@@ -1,11 +1,14 @@
 #include <QtGui>
 #include <QImage>
+#include <vector>
 
 #include "mainwindowimpl.h"
 #include "chatwindowimpl.h"
 #include "client.h"
 #include <pthread.h>
 #include "common.h"
+
+vector<string> users;
 
 
 MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f) 
@@ -18,17 +21,49 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	connect(usernameEdit, SIGNAL(selectionChanged()), this, SLOT(username_clear()));
 	connect(passwordEdit, SIGNAL(selectionChanged()), this, SLOT(password_clear()));
 
-
-
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
-	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));	
+	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));
 }
 
 void MainWindowImpl::init()
 {
 	chatWidget->setVisible(false);
 	loginWidget->setVisible(true);
+}
+
+void MainWindowImpl::sleep(int time)
+{
+	QTime dieTime = QTime::currentTime().addSecs(time);
+		while( QTime::currentTime() < dieTime )
+			QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+QListWidget* MainWindowImpl::get_listWidget()
+{
+	return listWidget;
+}
+
+bool MainWindowImpl::is_in_list(QString user)
+{
+	for(int row = 0; row < listWidget->count(); row++) {
+		QListWidgetItem *item = listWidget->item(row);
+		if (item->text() == user)
+			return true;
+	}
+	return false;
+}
+
+void MainWindowImpl::populate_list()
+{
+	extern map<string, user_info> user_list;
+	map<string, user_info>::iterator it;
+	int i;
+	for(it = user_list.begin(), i = 0; it != user_list.end(); ++it, i++) {
+		QString other_user = QString::fromStdString(it->first);
+		if (!is_in_list(other_user))
+			add_buddy(other_user);
+	}
 }
 
 void MainWindowImpl::sign_in()
@@ -43,8 +78,9 @@ void MainWindowImpl::sign_in()
 	struct arg_struct args;
 	args.arg1 = username.toStdString();
 	args.arg2 = strdup("127.0.0.1");
-	args.arg3 = strdup("1234");
+	args.arg3 = strdup("2222");
 	args.arg4 = strdup("/download");
+	
 	pthread_t tid;
 	pthread_create(&tid, NULL, &make_connection, (void*) &args);
 	pthread_detach(tid);
@@ -53,9 +89,7 @@ void MainWindowImpl::sign_in()
 	extern int connection_state;
 	while(connection_state != CONNECTED && connection_state != USER_EXISTS){
 		printf("CONNECTION_STATE=[%d]\n", connection_state);
-		QTime dieTime = QTime::currentTime().addSecs(2);
-		while( QTime::currentTime() < dieTime )
-			QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+		sleep(2);
 	}
 	
 	if (connection_state == USER_EXISTS) {
@@ -63,7 +97,6 @@ void MainWindowImpl::sign_in()
 			connection_state = NO_STATE;
 			errorLabel->setText("Username already online.");
 			signinButton->setFlat(false);
-
 			return;
 	}
 	
@@ -72,17 +105,20 @@ void MainWindowImpl::sign_in()
 		connection_state = NO_STATE;
 		errorLabel->setText("Connection problem.");
 		signinButton->setFlat(false);
-
 		return;
-		
 	}
+	
+	extern string from_who;
+	from_who = username.toStdString();
 	
 	signinButton->setFlat(false);
 	loginWidget->setVisible(false);
 	chatWidget->setVisible(true);
 	
 	refresh_label();
-	add_buddy(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"),username, listWidget));
+	//add_buddy(username);
+
+	populate_list();
 }
 
 void MainWindowImpl::about()
@@ -92,8 +128,16 @@ void MainWindowImpl::about()
 
 void MainWindowImpl::open_chat_window(QListWidgetItem* item)
 {
+	//ChatWindowImpl* chat = new ChatWindowImpl();
+	//chat->change_title(item->text());
+	//chat->show();
+	open_extern_chat(item->text());
+}
+
+void MainWindowImpl::open_extern_chat(QString title)
+{
 	ChatWindowImpl* chat = new ChatWindowImpl();
-	chat->change_title(item->text());
+	chat->change_title(title);
 	chat->show();
 }
 
@@ -116,13 +160,14 @@ void MainWindowImpl::add_buddy_hard()
 {
 	QString name = get_buddy_name();
 	if (name != NULL)
-		add_buddy(new QListWidgetItem(QIcon(":/ui/bb8.jpg"),name,listWidget));
+		add_buddy(name);
 	
 }
 
-void MainWindowImpl::add_buddy(QListWidgetItem* iTem1)
+void MainWindowImpl::add_buddy(QString username)
 {
-	listWidget->addItem(iTem1);
+	printf("ADAUG IN LISTA:[%s]\n", username.toStdString().c_str());
+	listWidget->addItem(new QListWidgetItem(QIcon("/home/luther/pidgi/ui/bb8.jpg"), username, listWidget));
 	refresh_label();
 }
 

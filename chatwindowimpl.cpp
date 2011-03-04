@@ -4,7 +4,10 @@
 #include <pthread.h>
 #include "common.h"
 
+
 string mesaj;
+string from_who;
+string to_who;
 
 ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent, f)
 {
@@ -16,6 +19,7 @@ ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent
 void ChatWindowImpl::change_title(QString user_name)
 {
 	QString window_title = "Chat with "  + user_name;
+	to_who = user_name.toStdString();
 	setWindowTitle(window_title);
 }
 

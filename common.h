@@ -3,6 +3,7 @@
 
 #include <string>
 #include <string.h>
+#include "mainwindowimpl.h"
 
 #define CONNECTED 1
 #define NO_STATE 0
@@ -10,6 +11,20 @@
 #define CONNECTION_PROBLEM 3
 
 using namespace std;
+
+
+struct user_info {
+	user_info(const string &h, const string &p, int &f) : host(h), port(p), fd(f) {}
+	user_info() : host("<none>"), port("-1"), fd(-1) {}
+	string host;
+	string port;
+	int fd;
+	vector<string> msg;
+	vector<string> files;
+	vector<string> flname;
+	int time;
+};
+
 
 struct arg_struct {
 	string arg1;

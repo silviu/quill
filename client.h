@@ -3,6 +3,7 @@
 
 // place your code here
 
+void* list_users(void* args);
 void* make_connection(void* args);
 void* send_message_gui(void* args);
 
