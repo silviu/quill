@@ -86,7 +86,7 @@ void* check_for_messages(void* win)
 				return NULL;
 			}
 		}
-	sleep(10);
+	sleep(3);
 	}
 	return NULL;
 }
@@ -97,6 +97,7 @@ int main(int argc, char ** argv)
 	QApplication app( argc, argv );
 	MainWindowImpl* win = new MainWindowImpl();
 	win->show();
+	win->installEventFilter(win->centralwidget);
 	
 	QListWidget* listWidget = win->get_listWidget();
 	pthread_t tid;

@@ -7,6 +7,7 @@
 #include "client.h"
 #include <pthread.h>
 #include "common.h"
+#include "keyeventfilter.h"
 
 vector<string> users;
 
@@ -16,7 +17,7 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 {
 	setupUi(this);
 	init();
-	new KeyEventFilter();	
+	new KeyEventFilter();
 	connect(signinButton, SIGNAL(clicked()), this, SLOT(sign_in()));
 	connect(usernameEdit, SIGNAL(selectionChanged()), this, SLOT(username_clear()));
 	connect(passwordEdit, SIGNAL(selectionChanged()), this, SLOT(password_clear()));

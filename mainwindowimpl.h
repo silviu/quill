@@ -5,6 +5,7 @@
 #include "ui_mainwindow.h"
 #include "common.h"
 #include <stdio.h>
+#include "chatwindowimpl.h"
 
 //
 class MainWindowImpl : public QMainWindow, public Ui::MainWindow
@@ -16,7 +17,7 @@ public:
 	void sleep(int time);
 	void populate_list();
 	QListWidget* get_listWidget();
-	void open_extern_chat(QString title);
+	static void open_extern_chat(QString title);
 
 
 friend class ChatWindowImpl;
@@ -35,24 +36,7 @@ private slots:
 private:
 	bool is_in_list(QString user);
 protected:
-	bool event(QObject *obj, QEvent *ev);
 	
-};
-
-class KeyEventFilter: public QObject
-{
-public:
-	KeyEventFilter(): QObject(qApp)
-	{
-		qApp->installEventFilter(this);
-	}
-
-	bool eventFilter(QObject* watched, QEvent* event)
-	{
-		if(event->type() == (QEvent::Type)1234)
-			printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n");
-		return false;
-	}
 };
 #endif
 
