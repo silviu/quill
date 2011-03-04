@@ -68,8 +68,9 @@ void* populate_list(void* listWidget)
 	return NULL;
 }
 
-void* check_for_messages(void*)
+void* check_for_messages(void* win)
 {
+	MainWindowImpl* winn = (MainWindowImpl*) win;
 	while(1){
 		extern map<string, user_info> user_list;
 		map<string, user_info>::iterator it;
@@ -78,6 +79,10 @@ void* check_for_messages(void*)
 			if (it->second.msg.size() > 0) {
 				printf("WE HAVE MESSAHE IN MAIN\n");
 				QString title= "SSS";
+				const QEvent::Type MyEvent = (QEvent::Type)1234;
+				
+				QApplication::postEvent(winn->centralwidget, new QEvent(MyEvent));
+
 				return NULL;
 			}
 		}
@@ -96,11 +101,11 @@ int main(int argc, char ** argv)
 	QListWidget* listWidget = win->get_listWidget();
 	pthread_t tid;
 	pthread_create(&tid, NULL, &populate_list, listWidget);
+	
+	pthread_t tidi;
+	pthread_create(&tidi, NULL, &check_for_messages, win);
 
 	app.connect( &app, SIGNAL( lastWindowClosed() ), &app, SLOT( quit() ) );
 	return app.exec();
-	
-	pthread_t tidi;
-	pthread_create(&tidi, NULL, &check_for_messages, NULL);
 	win->open_extern_chat("SSS");
 }

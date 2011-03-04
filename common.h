@@ -23,6 +23,7 @@ struct user_info {
 	vector<string> files;
 	vector<string> flname;
 	int time;
+	int order;
 };
 
 

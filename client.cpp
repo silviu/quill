@@ -224,20 +224,21 @@ void update_user_time()
 	map<string, user_info>::iterator it;
 	for (it = user_list.begin(); it != user_list.end(); ++it) {
 		if (it->second.time <= 0) {
-			printf("ZEROOOOO++++++++++++++\n");
+			//printf("ZEROOOOO++++++++++++++\n");
 			to_erase.push_back(it->first);
 		}
 		else {
-			printf("++++++++++++++TIME=[%d]", it->second.time);
+			//printf("++++++++++++++TIME=[%d]", it->second.time);
 			it->second.time--;
 		}
 	}
-	for (unsigned int i = 0; i < to_erase.size(); i++)
+	for (unsigned int i = 0; i < to_erase.size(); i++) {
 		user_list.erase(to_erase[i]);
+	}
 }
 int update_user_list(string user_bulk)
 {
-	printf("\n\nUPDATE_USER_LIST((((((((((((((((((())))))))))))))))))))\n");
+	static int order = 0;
 	string h, p, name;
 	map<string, user_info>::iterator it;
 	stringstream ss(stringstream::in|stringstream::out);
@@ -248,15 +249,20 @@ int update_user_list(string user_bulk)
 
 	user_info* user = new user_info(h, p, f);
 	it = user_list.find(name);
+
+	int user_list_size = user_list.size();	
 	
 	if (it != user_list.end())
-		it->second.time = 10;
+		it->second.time = 2 + user_list_size;
 
 	if (it == user_list.end()) {
 		/* if the username is not in the map add it to the user_list */
 		user_list.insert(pair<string, user_info>(name, *user));
 		it = user_list.find(name);
-		it->second.time = 10;
+		it->second.time = 2 + order;
+		printf("\n\nORDER________________________=[%d]\n", order);
+		order++;
+		it->second.order = order;
 	}
 	else if (( it->second.host != user->host ) || (it->second.port != user->port)) {
 		/* if the username already was in the list, but the host/port changed */

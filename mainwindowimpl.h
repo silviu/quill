@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "ui_mainwindow.h"
 #include "common.h"
+#include <stdio.h>
 
 //
 class MainWindowImpl : public QMainWindow, public Ui::MainWindow
@@ -33,6 +34,25 @@ private slots:
 
 private:
 	bool is_in_list(QString user);
+protected:
+	bool event(QObject *obj, QEvent *ev);
+	
+};
+
+class KeyEventFilter: public QObject
+{
+public:
+	KeyEventFilter(): QObject(qApp)
+	{
+		qApp->installEventFilter(this);
+	}
+
+	bool eventFilter(QObject* watched, QEvent* event)
+	{
+		if(event->type() == (QEvent::Type)1234)
+			printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n");
+		return false;
+	}
 };
 #endif
 

@@ -16,7 +16,7 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 {
 	setupUi(this);
 	init();
-	
+	new KeyEventFilter();	
 	connect(signinButton, SIGNAL(clicked()), this, SLOT(sign_in()));
 	connect(usernameEdit, SIGNAL(selectionChanged()), this, SLOT(username_clear()));
 	connect(passwordEdit, SIGNAL(selectionChanged()), this, SLOT(password_clear()));
@@ -25,6 +25,7 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
 	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));
 }
+
 
 void MainWindowImpl::init()
 {
