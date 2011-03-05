@@ -35,7 +35,7 @@ private slots:
 
 private:
 	bool is_in_list(QString user);
-protected:
+
 	
 };
 #endif

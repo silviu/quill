@@ -5,6 +5,10 @@
 #include <stdio.h>
 
 //
+map<string, ChatWindowImpl*> opened_chats;
+map<string, ChatWindowImpl*> chats_to_open;
+vector<string> new_messages;
+
 
 QString from_whom, message;
 
@@ -75,16 +79,16 @@ void* check_for_messages(void* win)
 		extern map<string, user_info> user_list;
 		map<string, user_info>::iterator it;
 		int i;
+		new_messages.clear();
 		for(it = user_list.begin(), i = 0; it != user_list.end(); ++it, i++) {
 			if (it->second.msg.size() > 0) {
 				printf("WE HAVE MESSAHE IN MAIN\n");
-				QString title= "SSS";
-				const QEvent::Type MyEvent = (QEvent::Type)1234;
-				
-				QApplication::postEvent(winn->centralwidget, new QEvent(MyEvent));
-
-				return NULL;
+				new_messages.push_back(it->first);
 			}
+		}
+		if (new_messages.size() > 0) {
+			const QEvent::Type MyEvent = (QEvent::Type)1234;				
+			QApplication::postEvent(winn->centralwidget, new QEvent(MyEvent));
 		}
 	sleep(3);
 	}

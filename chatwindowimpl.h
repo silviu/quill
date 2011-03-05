@@ -12,9 +12,16 @@ public:
 	ChatWindowImpl( QWidget * parent = 0, Qt::WFlags f = 0);
 	void change_title(QString user_name);
 	QString text;
-	QString get_time();	
+	QString get_time();
+	QString title_string;
+	void add_text_to_browser_from(QString message);
 	
 private slots:
 	void add_text_to_browser();
+	
+private:
+	void closeEvent(QCloseEvent *event);
+	void keyPressEvent(QKeyEvent * event);
+
 };
 #endif

@@ -16,6 +16,18 @@ ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent
 	textEdit->setFocus(Qt::OtherFocusReason);
 }
 
+void ChatWindowImpl::closeEvent(QCloseEvent *event)
+{
+	extern map<string, ChatWindowImpl*> opened_chats;
+	opened_chats.erase(title_string.toStdString());
+}
+
+void ChatWindowImpl::keyPressEvent(QKeyEvent * event)
+{
+	if (event->key() == Qt::Key_Enter)
+		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
+}
+
 void ChatWindowImpl::change_title(QString user_name)
 {
 	QString window_title = "Chat with "  + user_name;
@@ -28,6 +40,14 @@ QString ChatWindowImpl::get_time()
 	QDateTime dateTime = QDateTime::currentDateTime();
 	QString dateTimeString = dateTime.toString();
 	return dateTimeString;
+}
+
+void ChatWindowImpl::add_text_to_browser_from(QString message)
+{
+	text += title_string + "(" + get_time() + "): " + message;
+	textShow->setFontWeight(200);
+	textShow->setText(text);
+	text += "\n";
 }
 
 void ChatWindowImpl::add_text_to_browser()
