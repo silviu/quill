@@ -138,9 +138,17 @@ void MainWindowImpl::open_chat_window(QListWidgetItem* item)
 
 void MainWindowImpl::open_extern_chat(QString title)
 {
-	ChatWindowImpl* chat = new ChatWindowImpl();
-	chat->change_title(title);
-	chat->show();
+	extern map<string, ChatWindowImpl*> opened_chats;
+	map<string, ChatWindowImpl*>::iterator opened_chats_it;
+	
+	opened_chats_it = opened_chats.find(title.toStdString());
+	if (opened_chats_it == opened_chats.end()) {
+		ChatWindowImpl* chat = new ChatWindowImpl();
+		chat->change_title(title);
+		chat->title_string = title;
+		chat->show();
+		opened_chats.insert(pair<string, ChatWindowImpl*>(chat->title_string.toStdString(), chat));
+	}
 }
 
 QString MainWindowImpl::get_buddy_name()

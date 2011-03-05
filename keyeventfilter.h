@@ -34,6 +34,7 @@ public:
 				else {
 					ChatWindowImpl* chat = new ChatWindowImpl();
 					chat->title_string = QString::fromStdString(new_messages[i]); 
+					chat->change_title(chat->title_string);
 					chat->show();
 					opened_chats.insert(pair<string, ChatWindowImpl*>(chat->title_string.toStdString(), chat));
 					user_list_it = user_list.find(new_messages[i]);
