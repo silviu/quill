@@ -10,6 +10,11 @@ public:
 	{
 		qApp->installEventFilter(this);
 	}
+	
+	KeyEventFilter(QObject* obj)
+	{
+		obj->installEventFilter(this);
+	}
 
 	bool eventFilter(QObject*, QEvent* event);
 	

@@ -4,8 +4,9 @@
 #include <pthread.h>
 #include "common.h"
 #include <QTextCursor>
+ #include <QTextEdit>
 
-
+#include "keyeventfilter.h"
 
 string mesaj;
 string from_who;
@@ -16,6 +17,8 @@ ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent
 	setupUi(this);
 	connect(sendButton, SIGNAL(clicked()), this, SLOT(add_text_to_browser()));
 	textEdit->setFocus(Qt::OtherFocusReason);
+	textEdit->setTabChangesFocus(true);
+	new KeyEventFilter(textEdit);
 }
 
 void ChatWindowImpl::closeEvent(QCloseEvent*)
@@ -25,17 +28,19 @@ void ChatWindowImpl::closeEvent(QCloseEvent*)
 }
 
 void ChatWindowImpl::keyPressEvent(QKeyEvent * event)
-{
+{	
 	if (event->key() == Qt::Key_Return) {
 		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
+		add_text_to_browser();
 		return;
 	}
-	
-	if (event->key() == Qt::Key_Escape) {
+	else if (event->key() == Qt::Key_Escape) {
 		printf("ESCAPE\n");
 		close();
 		return;
 	}
+	else
+		textEdit->setFocus(Qt::OtherFocusReason);
 }
 
 void ChatWindowImpl::change_title(QString user_name)
@@ -74,8 +79,10 @@ void ChatWindowImpl::append_standard_header(QString from_whom)
 void ChatWindowImpl::add_text_to_browser()
 {
 	QString message = textEdit->toPlainText();
-	mesaj = message.toStdString();
-		
+	textEdit->clear();
+	message.remove('\n');
+	
+	mesaj = message.toStdString();		
 	if (message != "") {
 		append_standard_header("me");
 		textShow->setFontWeight(55);
@@ -88,5 +95,4 @@ void ChatWindowImpl::add_text_to_browser()
 		pthread_t tid;
 		pthread_create(&tid, NULL, &send_message_gui, (void*) &args);
 	}
-	textEdit->clear();
 }

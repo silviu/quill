@@ -1,6 +1,7 @@
 #include "keyeventfilter.h"
+#include <QKeyEvent>
 
-bool KeyEventFilter::eventFilter(QObject*, QEvent* event)
+bool KeyEventFilter::eventFilter(QObject* obj, QEvent* event)
 {
 	if(event->type() == (QEvent::Type)1234){
 		printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n");
@@ -33,6 +34,15 @@ bool KeyEventFilter::eventFilter(QObject*, QEvent* event)
 					user_list_it->second.msg.clear();
 				}
 			}
+		}
+	}
+	else if (obj->objectName() == "textEdit" && event->type() == QEvent::KeyPress) {
+		QKeyEvent* eventt = (QKeyEvent*)event;
+		if (eventt->key() == Qt::Key_Return) {
+			printf("ALLALALALALALA\n\n");
+			QObject* parent = obj->parent();
+			ChatWindowImpl* chat = (ChatWindowImpl*) parent;
+			chat->add_text_to_browser();
 		}
 	}
 	return false;
