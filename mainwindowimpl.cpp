@@ -40,6 +40,10 @@ void MainWindowImpl::init()
 void MainWindowImpl::keyPressEvent(QKeyEvent * event)
 {
 	if (event->key() == Qt::Key_Return) {
+		if (loginWidget->isVisible()) {
+			sign_in();
+			printf("ENTERRRRR SIGN IIIIIIIIIIINNNN\n\n");
+		}
 		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
 	}
 }

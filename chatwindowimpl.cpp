@@ -24,9 +24,9 @@ void ChatWindowImpl::closeEvent(QCloseEvent *event)
 
 void ChatWindowImpl::keyPressEvent(QKeyEvent * event)
 {
-	if (event->key() == Qt::Key_Enter)
+	if (event->key() == Qt::Key_Return) {
 		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
-	printf("TROLOLOLOLO\n\n");
+	}
 }
 
 void ChatWindowImpl::change_title(QString user_name)
