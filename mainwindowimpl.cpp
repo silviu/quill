@@ -25,13 +25,23 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(AddButton, SIGNAL(clicked()), this, SLOT(add_buddy_hard()));
 	connect(listWidget, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));
+	connect(listWidget, SIGNAL( itemActivated( QListWidgetItem* ) ), this, SLOT( open_chat_window(QListWidgetItem*)));
+
 }
+
 
 
 void MainWindowImpl::init()
 {
 	chatWidget->setVisible(false);
 	loginWidget->setVisible(true);
+}
+
+void MainWindowImpl::keyPressEvent(QKeyEvent * event)
+{
+	if (event->key() == Qt::Key_Return) {
+		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
+	}
 }
 
 void MainWindowImpl::sleep(int time)

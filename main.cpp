@@ -90,6 +90,7 @@ void* check_for_messages(void* win)
 			const QEvent::Type MyEvent = (QEvent::Type)1234;				
 			QApplication::postEvent(winn->centralwidget, new QEvent(MyEvent));
 		}
+	winn->refresh_label();
 	sleep(3);
 	}
 	return NULL;

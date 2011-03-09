@@ -18,6 +18,14 @@
 #include <vector>
 #include "mainwindowimpl.h"
 
+#include <stdio.h>      
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <netinet/in.h> 
+#include <string.h> 
+#include <arpa/inet.h>
+
+
 #define MAX_BACKLOG 10
 #define PROTO_START_MSG "msg from "
 #define PROTO_START_FILE "file from "
@@ -623,15 +631,27 @@ int make_connection(void* args)
 	
     string client_name = string(name);
 	string download = string(client_download);
-	/* Connect to the server. Get the dile descriptor. */
+	/* Connect to the server. Get the file descriptor. */
 	int cfd = connect_to(server_host.c_str(), server_port.c_str());
+	
+	
+	char* buffer = (char*)malloc(1000);
+	struct sockaddr_in nname;
+    socklen_t namelen = sizeof(nname);
+    getsockname(cfd, (sockaddr*) &nname, &namelen);
+
+    const char* p = inet_ntop(AF_INET, &nname.sin_addr, buffer, 1000);
+    printf("IPPPPPPPPPPPP//////////////=[%s]\n\n", buffer);
+    
+    
     
 	string to_send;
 	to_send.append(name); to_send.append(" ");
-	to_send.append(host); to_send.append(" ");
+	to_send.append(buffer); to_send.append(" ");
 	to_send.append(port);
 
     /* Send user info to the server */
+    printf("ABOUT TO SEND USER INFO:[%s]\n\n", to_send.c_str());
 	rc = writeln(cfd, to_send);
 	if (rc == -1) {
 		perros("writeln in main");

@@ -26,6 +26,7 @@ void ChatWindowImpl::keyPressEvent(QKeyEvent * event)
 {
 	if (event->key() == Qt::Key_Enter)
 		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
+	printf("TROLOLOLOLO\n\n");
 }
 
 void ChatWindowImpl::change_title(QString user_name)

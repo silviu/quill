@@ -18,6 +18,7 @@ public:
 	void populate_list();
 	QListWidget* get_listWidget();
 	static void open_extern_chat(QString title);
+	void refresh_label();
 
 
 friend class ChatWindowImpl;
@@ -27,7 +28,6 @@ private slots:
 	void init();
 	void add_buddy(QString user_name);
 	void add_buddy_hard();
-	void refresh_label();
 	QString get_buddy_name();
 	void open_chat_window(QListWidgetItem*);
 	void username_clear();
@@ -35,7 +35,7 @@ private slots:
 
 private:
 	bool is_in_list(QString user);
-
+	void keyPressEvent(QKeyEvent * event);
 	
 };
 #endif
