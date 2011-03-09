@@ -22,6 +22,6 @@ private slots:
 private:
 	void closeEvent(QCloseEvent *event);
 	void keyPressEvent(QKeyEvent * event);
-
+	void append_standard_header(QString from_whom);
 };
 #endif

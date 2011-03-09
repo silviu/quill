@@ -3,6 +3,8 @@
 #include "client.h"
 #include <pthread.h>
 #include "common.h"
+#include <QTextCursor>
+
 
 
 string mesaj;
@@ -52,22 +54,33 @@ QString ChatWindowImpl::get_time()
 
 void ChatWindowImpl::add_text_to_browser_from(QString message)
 {
-	text += title_string + "(" + get_time() + "): " + message;
-	textShow->setFontWeight(200);
-	textShow->setText(text);
-	text += "\n";
+	append_standard_header(title_string);
+	textShow->setFontWeight(50);
+	textShow->setTextColor(Qt::black);
+	textShow->textCursor().insertText(message);
+}
+
+void ChatWindowImpl::append_standard_header(QString from_whom)
+{
+	textShow->setFontWeight(60);
+	if (from_whom == "me")
+		textShow->setTextColor(Qt::darkGreen);
+	else
+		textShow->setTextColor(Qt::darkRed);
+	QString standard_header = from_whom + "(" + get_time() + "): "; 
+	textShow->append(standard_header);
 }
 
 void ChatWindowImpl::add_text_to_browser()
 {
 	QString message = textEdit->toPlainText();
 	mesaj = message.toStdString();
-	
+		
 	if (message != "") {
-		text += "me(" + get_time() + "): " + message;
-		textShow->setFontWeight(200);
-		textShow->setText(text);
-		text += "\n";
+		append_standard_header("me");
+		textShow->setFontWeight(55);
+		textShow->setTextColor(Qt::black);
+		textShow->textCursor().insertText(message);
 		
 		struct argu_struct args;
 		args.arg1 = "luther";
