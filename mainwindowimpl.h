@@ -11,6 +11,7 @@
 class MainWindowImpl : public QMainWindow, public Ui::MainWindow
 {
 Q_OBJECT
+
 public:
 	MainWindowImpl( QWidget * parent = 0, Qt::WFlags f = 0 );
 	QString username;
@@ -20,8 +21,6 @@ public:
 	static void open_extern_chat(QString title);
 	void refresh_label();
 
-
-friend class ChatWindowImpl;
 private slots:
 	void about();
 	void sign_in();
@@ -36,7 +35,7 @@ private slots:
 private:
 	bool is_in_list(QString user);
 	void keyPressEvent(QKeyEvent * event);
-	
+	void closeEvent(QCloseEvent* event);
 };
 #endif
 

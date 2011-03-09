@@ -11,7 +11,6 @@
 
 vector<string> users;
 
-
 MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f) 
 	: QMainWindow(parent, f)
 {
@@ -29,12 +28,18 @@ MainWindowImpl::MainWindowImpl( QWidget * parent, Qt::WFlags f)
 
 }
 
-
-
 void MainWindowImpl::init()
 {
 	chatWidget->setVisible(false);
 	loginWidget->setVisible(true);
+}
+
+void MainWindowImpl::closeEvent(QCloseEvent*)
+{
+	extern map<string, ChatWindowImpl*> opened_chats;
+	map<string, ChatWindowImpl*>::iterator opened_chats_it;
+	for (opened_chats_it = opened_chats.begin(); opened_chats_it != opened_chats.end(); ++opened_chats_it)
+		delete(opened_chats_it->second);
 }
 
 void MainWindowImpl::keyPressEvent(QKeyEvent * event)
@@ -45,6 +50,7 @@ void MainWindowImpl::keyPressEvent(QKeyEvent * event)
 			printf("ENTERRRRR SIGN IIIIIIIIIIINNNN\n\n");
 		}
 		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
+		return;
 	}
 }
 
@@ -130,6 +136,7 @@ void MainWindowImpl::sign_in()
 	signinButton->setFlat(false);
 	loginWidget->setVisible(false);
 	chatWidget->setVisible(true);
+	listWidget->setFocus();
 	
 	refresh_label();
 	//add_buddy(username);

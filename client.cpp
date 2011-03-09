@@ -640,7 +640,7 @@ int make_connection(void* args)
     socklen_t namelen = sizeof(nname);
     getsockname(cfd, (sockaddr*) &nname, &namelen);
 
-    const char* p = inet_ntop(AF_INET, &nname.sin_addr, buffer, 1000);
+    inet_ntop(AF_INET, &nname.sin_addr, buffer, 1000);
     printf("IPPPPPPPPPPPP//////////////=[%s]\n\n", buffer);
     
     

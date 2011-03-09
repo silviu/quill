@@ -16,7 +16,7 @@ ChatWindowImpl::ChatWindowImpl( QWidget * parent, Qt::WFlags f) : QWidget(parent
 	textEdit->setFocus(Qt::OtherFocusReason);
 }
 
-void ChatWindowImpl::closeEvent(QCloseEvent *event)
+void ChatWindowImpl::closeEvent(QCloseEvent*)
 {
 	extern map<string, ChatWindowImpl*> opened_chats;
 	opened_chats.erase(title_string.toStdString());
@@ -26,6 +26,13 @@ void ChatWindowImpl::keyPressEvent(QKeyEvent * event)
 {
 	if (event->key() == Qt::Key_Return) {
 		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
+		return;
+	}
+	
+	if (event->key() == Qt::Key_Escape) {
+		printf("ESCAPE\n");
+		close();
+		return;
 	}
 }
 
