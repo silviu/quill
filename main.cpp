@@ -82,7 +82,6 @@ void* check_for_messages(void* win)
 		new_messages.clear();
 		for(it = user_list.begin(), i = 0; it != user_list.end(); ++it, i++) {
 			if (it->second.msg.size() > 0) {
-				printf("WE HAVE MESSAHE IN MAIN\n");
 				new_messages.push_back(it->first);
 			}
 		}

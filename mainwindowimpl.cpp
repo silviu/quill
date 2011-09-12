@@ -40,6 +40,7 @@ void MainWindowImpl::closeEvent(QCloseEvent*)
 	map<string, ChatWindowImpl*>::iterator opened_chats_it;
 	for (opened_chats_it = opened_chats.begin(); opened_chats_it != opened_chats.end(); ++opened_chats_it)
 		delete(opened_chats_it->second);
+	exit(EXIT_SUCCESS);
 }
 
 void MainWindowImpl::keyPressEvent(QKeyEvent * event)
@@ -96,7 +97,7 @@ void MainWindowImpl::sign_in()
 	
 	struct arg_struct args;
 	args.arg1 = username.toStdString();
-	args.arg2 = strdup("127.0.0.1");
+ 	args.arg2 = strdup("127.0.0.1");
 	args.arg3 = strdup("2222");
 	args.arg4 = strdup("/download");
 	

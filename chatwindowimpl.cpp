@@ -30,12 +30,10 @@ void ChatWindowImpl::closeEvent(QCloseEvent*)
 void ChatWindowImpl::keyPressEvent(QKeyEvent * event)
 {	
 	if (event->key() == Qt::Key_Return) {
-		printf("ENTERRRRRRRRRRRRRRRRR\n\n");
 		add_text_to_browser();
 		return;
 	}
 	else if (event->key() == Qt::Key_Escape) {
-		printf("ESCAPE\n");
 		close();
 		return;
 	}

@@ -14,8 +14,9 @@ public:
 	QString get_time();
 	QString title_string;
 	void add_text_to_browser_from(QString message);
-	void add_text_to_browser();
 	
+public slots:
+	void add_text_to_browser();	
 private:
 	void closeEvent(QCloseEvent *event);
 	void keyPressEvent(QKeyEvent * event);

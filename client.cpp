@@ -268,7 +268,7 @@ int update_user_list(string user_bulk)
 		user_list.insert(pair<string, user_info>(name, *user));
 		it = user_list.find(name);
 		it->second.time = 2 + order;
-		printf("\n\nORDER________________________=[%d]\n", order);
+		//printf("\n\nORDER________________________=[%d]\n", order);
 		order++;
 		it->second.order = order;
 	}
@@ -596,6 +596,30 @@ int bind_to_random_port(string &host, string & port)
 	port.assign(addr_serv);
 	return bfd;
 }
+
+
+/** Binds to a random port on which it will then listen */
+int bind_to_speciffic_port(string the_port, string &host, string & port)
+{    
+	struct sockaddr_storage addr;
+	socklen_t len = sizeof(addr);
+
+	int bfd = bind_to(NULL, "0");
+	int rc = getsockname(bfd, (sockaddr*)&addr, &len);
+	if (rc == -1) {
+		perros("getsockname in bind_to_random_port()");
+		return -1;
+	}
+	char addr_host[NI_MAXHOST], addr_serv[NI_MAXSERV];
+	rc = getnameinfo( (sockaddr*) &addr, len, addr_host, NI_MAXHOST, addr_serv, NI_MAXSERV, NI_NUMERICSERV|NI_NUMERICHOST);
+	if (rc != 0) {
+		fprintf(stderr, "getnameinfo: %s\n", gai_strerror(rc));
+		return -1;
+	}
+	host.assign(addr_host);
+	port.assign(addr_serv);
+	return bfd;
+}
  
 
 int make_connection(void* args)
@@ -609,14 +633,15 @@ int make_connection(void* args)
 		exit(EXIT_FAILURE);
 	}
 */
- 	string host, port;
+ 	string host, port, the_port;
 	int bfd = bind_to_random_port(host, port);
+	
 	if (bfd == -1) {
 		perros("bind_to_random_port returned -1 in main");
 		return -1;
 		connection_state = CONNECTION_PROBLEM;
 	}
-
+	
 	int rc = listen(bfd, MAX_BACKLOG);
 	if ( rc == -1) {
 		perros("listen in main");
@@ -633,8 +658,7 @@ int make_connection(void* args)
 	string download = string(client_download);
 	/* Connect to the server. Get the file descriptor. */
 	int cfd = connect_to(server_host.c_str(), server_port.c_str());
-	
-	
+		
 	char* buffer = (char*)malloc(1000);
 	struct sockaddr_in nname;
     socklen_t namelen = sizeof(nname);

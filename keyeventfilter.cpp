@@ -4,7 +4,6 @@
 bool KeyEventFilter::eventFilter(QObject* obj, QEvent* event)
 {
 	if(event->type() == (QEvent::Type)1234){
-		printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n");
 		extern vector<string> new_messages;
 		extern map<string, ChatWindowImpl*> opened_chats;
 		extern map<string, user_info> user_list;
@@ -39,7 +38,6 @@ bool KeyEventFilter::eventFilter(QObject* obj, QEvent* event)
 	else if (obj->objectName() == "textEdit" && event->type() == QEvent::KeyPress) {
 		QKeyEvent* eventt = (QKeyEvent*)event;
 		if (eventt->key() == Qt::Key_Return) {
-			printf("ALLALALALALALA\n\n");
 			QObject* parent = obj->parent();
 			ChatWindowImpl* chat = (ChatWindowImpl*) parent;
 			chat->add_text_to_browser();
